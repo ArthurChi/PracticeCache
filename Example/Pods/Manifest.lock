@@ -1,0 +1,16 @@
+PODS:
+  - PracticeCache (0.1.0)
+
+DEPENDENCIES:
+  - PracticeCache (from `../`)
+
+EXTERNAL SOURCES:
+  PracticeCache:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  PracticeCache: 0d99801ddf05dd539ff421be4c1d2a82264278c7
+
+PODFILE CHECKSUM: e2887cbfb97d288330f0f7be18eff243b41b3fd4
+
+COCOAPODS: 1.5.3

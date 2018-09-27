@@ -1,0 +1,6 @@
+framework module PracticeCache {
+  umbrella header "PracticeCache-umbrella.h"
+
+  export *
+  module * { export * }
+}

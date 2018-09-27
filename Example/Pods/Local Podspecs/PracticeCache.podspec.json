@@ -1,0 +1,22 @@
+{
+  "name": "PracticeCache",
+  "version": "0.1.0",
+  "summary": "A short description of PracticeCache.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/sun-fox-cj/PracticeCache",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "sun-fox-cj": "arthurvassilychi@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/sun-fox-cj/PracticeCache.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "PracticeCache/Classes/**/*"
+}
