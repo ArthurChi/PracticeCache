@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'PracticeCache_Example' do
+  pod 'PracticeCache', :path => '../'
+
+  target 'PracticeCache_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
