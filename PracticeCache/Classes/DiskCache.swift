@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol DiskCacheable: Cacheable, CacheableAsync {
+protocol DiskCacheable: CacheStandard, CacheAsyncStandard {
     init(path: URL)
 }

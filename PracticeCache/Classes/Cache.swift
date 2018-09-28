@@ -7,43 +7,68 @@
 
 import Foundation
 
-protocol Cacheable {
+protocol CacheStandard {
+    associatedtype ValueType: Codable
     func containsObject(key: String) -> Bool
-    func query<T: Codable>(key: String) -> T?
-    func save<T: Codable>(value: T, for key: String)
+    func query(key: String) -> ValueType?
+    func save(value: ValueType, for key: String)
     func remove(key: String)
     func removeAll()
 }
 
-protocol CacheableAsync {
+protocol CacheAsyncStandard {
+    associatedtype ValueType: Codable
     func containsObject(key: String, _ result: @escaping ((_ key: String, _ contain: Bool) -> Void))
-    func query<T: Codable>(key: String, _ result: @escaping ((_ key: String, _ value: T?) -> Void))
-    func save<T: Codable>(value: T, for key: String, _ result: @escaping (()->Void))
+    func query(key: String, _ result: @escaping ((_ key: String, _ value: ValueType?) -> Void))
+    func save(value: ValueType, for key: String, _ result: @escaping (()->Void))
     func remove(key: String, _ result: @escaping ((_ key: String) -> Void))
     func removeAll(_ result: @escaping (()->Void))
 }
 
-struct Cache {
+protocol Lock {
+    func lock()
+    func unLock()
+}
+
+final class Mutex: Lock {
+    private var mutex: pthread_mutex_t = {
+        var mutex = pthread_mutex_t()
+        pthread_mutex_init(&mutex, nil)
+        return mutex
+    }()
     
-    private var memoryCache: MemoryCacheable
-    private var diskCache: DiskCacheable
+    func lock() {
+        pthread_mutex_lock(&mutex)
+    }
     
-    init(memoryCache: MemoryCacheable, diskCache: DiskCacheable) {
+    func unLock() {
+        pthread_mutex_unlock(&mutex)
+    }
+}
+
+struct Cache<T, M: CacheStandard, D: CacheStandard & CacheAsyncStandard> where M.ValueType == T, D.ValueType == T {
+    typealias ValueType = T
+    
+    private var memoryCache: M
+    private var diskCache: D
+    
+    init(memoryCache: M, diskCache: D) {
         self.memoryCache = memoryCache
         self.diskCache = diskCache
     }
 }
 
-extension Cache: Cacheable {
+extension Cache: CacheStandard {
+    
     func containsObject(key: String) -> Bool {
         return memoryCache.containsObject(key: key) || diskCache.containsObject(key: key)
     }
     
-    func query<T>(key: String) -> T? where T : Decodable, T : Encodable {
+    func query(key: String) -> T? {
         var value: T? = memoryCache.query(key: key)
         if value == nil {
             value = diskCache.query(key: key)
-            if value != nil {
+            if let value = value {
                 memoryCache.save(value: value, for: key)
             }
         }
@@ -51,7 +76,7 @@ extension Cache: Cacheable {
         return value
     }
     
-    func save<T>(value: T, for key: String) where T : Decodable, T : Encodable {
+    func save(value: T, for key: String) {
         memoryCache.save(value: value, for: key)
         diskCache.save(value: value, for: key)
     }
@@ -67,7 +92,7 @@ extension Cache: Cacheable {
     }
 }
 
-extension Cache: CacheableAsync {
+extension Cache: CacheAsyncStandard {
     func containsObject(key: String, _ result: @escaping ((String, Bool) -> Void)) {
         if memoryCache.containsObject(key: key) {
             DispatchQueue.global().async {
@@ -78,7 +103,7 @@ extension Cache: CacheableAsync {
         }
     }
     
-    func query<T>(key: String, _ result: @escaping ((String, T?) -> Void)) where T : Decodable, T : Encodable {
+    func query(key: String, _ result: @escaping ((String, T?) -> Void)) {
         if let value: T = memoryCache.query(key: key) {
             DispatchQueue.global().async {
                 result(key, value)
@@ -88,7 +113,7 @@ extension Cache: CacheableAsync {
         }
     }
     
-    func save<T>(value: T, for key: String, _ result: @escaping (() -> Void)) where T : Decodable, T : Encodable {
+    func save(value: T, for key: String, _ result: @escaping (() -> Void)) {
         memoryCache.save(value: value, for: key)
         diskCache.save(value: value, for: key, result)
     }

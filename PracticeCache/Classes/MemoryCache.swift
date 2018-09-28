@@ -7,6 +7,9 @@
 
 import Foundation
 
-protocol MemoryCacheable: Cacheable {
+protocol MemoryCacheable: CacheStandard {
+    
+}
+
     
 }
