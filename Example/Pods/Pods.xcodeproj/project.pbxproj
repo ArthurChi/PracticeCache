@@ -106,6 +106,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A52C4AD215D0AFE00536AC6 /* Lock */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Lock;
+			sourceTree = "<group>";
+		};
 		329B8057CE948111E03EF1D8D806DBF8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -196,9 +203,10 @@
 		BE3D824EBC5E18627939F18C281A68EA /* PracticeCache */ = {
 			isa = PBXGroup;
 			children = (
+				2A52C4AD215D0AFE00536AC6 /* Lock */,
 				2A52C4A7215CE43E00536AC6 /* Cache.swift */,
-				2A52C4A6215CE43D00536AC6 /* DiskCache.swift */,
 				2A52C4A8215CE43E00536AC6 /* MemoryCache.swift */,
+				2A52C4A6215CE43D00536AC6 /* DiskCache.swift */,
 				4A5D93B71BF4DEAF167742B9F5DB9529 /* Pod */,
 				582D47C6C34A5C051953E23F9D00411D /* Support Files */,
 			);
