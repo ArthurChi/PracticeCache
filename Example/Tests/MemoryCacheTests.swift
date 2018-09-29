@@ -1,5 +1,5 @@
 //
-//  MemoryTests.swift
+//  MemoryCacheTests.swift
 //  PracticeCache_Tests
 //
 //  Created by Vassily on 2018/9/29.
@@ -8,16 +8,16 @@
 
 import XCTest
 
-class MemoryTests: XCTestCase {
+class MemoryCacheTests: XCTestCase {
 
     override func setUp() {
-        
+        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
+
     func test_query() {
         
     }
