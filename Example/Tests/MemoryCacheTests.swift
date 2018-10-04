@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import PracticeCache
 
 class MemoryCacheTests: XCTestCase {
 
@@ -18,15 +19,28 @@ class MemoryCacheTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func test_query() {
+    func test_memory_contain_thread_safe() {
+        var memoryCache = MemoryCache<String, User>()
         
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        let ext = self.expectation(description: "ext")
+        
+        let exeCount = 10000
+        
+        DispatchQueue.concurrentPerform(iterations: exeCount) { (index) in
+            
+            let user = User(isActive: true, account: Account(alias: "test\(index)"))
+            memoryCache.save(value: user, for: "abc\(index)")
+            print(index)
+            
+            DispatchQueue.global().async {
+                let _ = memoryCache.query(key: "abc\(index)")
+                if index == exeCount - 1 {
+                    ext.fulfill()
+                }
+            }
         }
+        
+        wait(for: [ext], timeout: 200)
     }
 
 }

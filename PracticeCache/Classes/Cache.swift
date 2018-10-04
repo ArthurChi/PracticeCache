@@ -7,24 +7,24 @@
 
 import Foundation
 
-protocol CacheStandard {
+public protocol CacheStandard {
     associatedtype ValueType: Codable
     associatedtype Key: Hashable
-    func containsObject(key: Key) -> Bool
-    func query(key: Key) -> ValueType?
-    func save(value: ValueType, for key: Key)
-    func remove(key: Key)
-    func removeAll()
+    mutating func containsObject(key: Key) -> Bool
+    mutating func query(key: Key) -> ValueType?
+    mutating func save(value: ValueType, for key: Key)
+    mutating func remove(key: Key)
+    mutating func removeAll()
 }
 
-protocol CacheAsyncStandard {
+public protocol CacheAsyncStandard {
     associatedtype ValueType: Codable
     associatedtype Key: Hashable
-    func containsObject(key: Key, _ result: @escaping ((_ key: Key, _ contain: Bool) -> Void))
-    func query(key: Key, _ result: @escaping ((_ key: Key, _ value: ValueType?) -> Void))
-    func save(value: ValueType, for key: Key, _ result: @escaping (()->Void))
-    func remove(key: Key, _ result: @escaping ((_ key: Key) -> Void))
-    func removeAll(_ result: @escaping (()->Void))
+    mutating func containsObject(key: Key, _ result: @escaping ((_ key: Key, _ contain: Bool) -> Void))
+    mutating func query(key: Key, _ result: @escaping ((_ key: Key, _ value: ValueType?) -> Void))
+    mutating func save(value: ValueType, for key: Key, _ result: @escaping (()->Void))
+    mutating func remove(key: Key, _ result: @escaping ((_ key: Key) -> Void))
+    mutating func removeAll(_ result: @escaping (()->Void))
 }
 
 protocol Lock {
@@ -63,11 +63,12 @@ struct Cache<K, V, M: CacheStandard, D: CacheStandard & CacheAsyncStandard> wher
 }
 
 extension Cache: CacheStandard {
-    func containsObject(key: Key) -> Bool {
+    
+    mutating func containsObject(key: Key) -> Bool {
         return memoryCache.containsObject(key: key) || diskCache.containsObject(key: key)
     }
 
-    func query(key: Key) -> ValueType? {
+    mutating func query(key: Key) -> ValueType? {
         var value: ValueType? = memoryCache.query(key: key)
         if value == nil {
             value = diskCache.query(key: key)
@@ -79,24 +80,24 @@ extension Cache: CacheStandard {
         return value
     }
 
-    func save(value: ValueType, for key: Key) {
+    mutating func save(value: ValueType, for key: Key) {
         memoryCache.save(value: value, for: key)
         diskCache.save(value: value, for: key)
     }
 
-    func remove(key: Key) {
+    mutating func remove(key: Key) {
         memoryCache.remove(key: key)
         diskCache.remove(key: key)
     }
 
-    func removeAll() {
+    mutating func removeAll() {
         memoryCache.removeAll()
         diskCache.removeAll()
     }
 }
 
 extension Cache: CacheAsyncStandard {
-    func containsObject(key: Key, _ result: @escaping ((Key, Bool) -> Void)) {
+    mutating func containsObject(key: Key, _ result: @escaping ((Key, Bool) -> Void)) {
         if memoryCache.containsObject(key: key) {
             DispatchQueue.global().async {
                 result(key, true)
@@ -106,7 +107,7 @@ extension Cache: CacheAsyncStandard {
         }
     }
 
-    func query(key: Key, _ result: @escaping ((Key, ValueType?) -> Void)) {
+    mutating func query(key: Key, _ result: @escaping ((Key, ValueType?) -> Void)) {
         if let value: ValueType = memoryCache.query(key: key) {
             DispatchQueue.global().async {
                 result(key, value)
@@ -116,17 +117,17 @@ extension Cache: CacheAsyncStandard {
         }
     }
 
-    func save(value: ValueType, for key: Key, _ result: @escaping (() -> Void)) {
+    mutating func save(value: ValueType, for key: Key, _ result: @escaping (() -> Void)) {
         memoryCache.save(value: value, for: key)
         diskCache.save(value: value, for: key, result)
     }
 
-    func remove(key: Key, _ result: @escaping ((Key) -> Void)) {
+    mutating func remove(key: Key, _ result: @escaping ((Key) -> Void)) {
         memoryCache.remove(key: key)
         diskCache.remove(key: key, result)
     }
 
-    func removeAll(_ result: @escaping (() -> Void)) {
+    mutating func removeAll(_ result: @escaping (() -> Void)) {
         memoryCache.removeAll()
         diskCache.removeAll(result)
     }
