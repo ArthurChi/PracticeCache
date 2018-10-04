@@ -42,5 +42,22 @@ class MemoryCacheTests: XCTestCase {
         
         wait(for: [ext], timeout: 200)
     }
+    
+    func test_lru_query() {
+        var memoryCache = MemoryCache<String, User>()
+        
+        let key = "1"
+        let key1 = "2"
+        
+        let nilUser = memoryCache.query(key: key)
+        XCTAssertNil(nilUser)
+        
+        let user = User(isActive: true, account: Account(alias: "test123"))
+        memoryCache.save(value: user, for: key)
+        
+        let user1 = User(isActive: true, account: Account(alias: "test456"))
+        memoryCache.save(value: user1, for: key1)
+        
+    }
 
 }
