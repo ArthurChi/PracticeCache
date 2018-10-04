@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		20BF83171B40CBC3AC6A93BF /* Pods_PracticeCache_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB17AB1533C18B6F606C389 /* Pods_PracticeCache_Tests.framework */; };
-		2A2E26DC21607C600012D9EA /* MockStudent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2E26DB21607C600012D9EA /* MockStudent.swift */; };
+		2A2E26DC21607C600012D9EA /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2E26DB21607C600012D9EA /* MockUser.swift */; };
 		2A517C06215FAA7D002DC160 /* MockMemoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A517C05215FAA7D002DC160 /* MockMemoryCache.swift */; };
 		2A517C08215FAA99002DC160 /* MemoryCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A517C07215FAA99002DC160 /* MemoryCacheTests.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -35,7 +35,7 @@
 		1773010D4490BC85D22D9354 /* Pods-PracticeCache_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PracticeCache_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-PracticeCache_Example/Pods-PracticeCache_Example.release.xcconfig"; sourceTree = "<group>"; };
 		249981F3CC490F6D470BB26E /* Pods_PracticeCache_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PracticeCache_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2771FE381F7FECE466B86507 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		2A2E26DB21607C600012D9EA /* MockStudent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStudent.swift; sourceTree = "<group>"; };
+		2A2E26DB21607C600012D9EA /* MockUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUser.swift; sourceTree = "<group>"; };
 		2A517C05215FAA7D002DC160 /* MockMemoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMemoryCache.swift; sourceTree = "<group>"; };
 		2A517C07215FAA99002DC160 /* MemoryCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCacheTests.swift; sourceTree = "<group>"; };
 		2A517C0921605496002DC160 /* Readme.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Readme.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -78,7 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				2A517C05215FAA7D002DC160 /* MockMemoryCache.swift */,
-				2A2E26DB21607C600012D9EA /* MockStudent.swift */,
+				2A2E26DB21607C600012D9EA /* MockUser.swift */,
 			);
 			name = Mocks;
 			sourceTree = "<group>";
@@ -371,7 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A517C08215FAA99002DC160 /* MemoryCacheTests.swift in Sources */,
-				2A2E26DC21607C600012D9EA /* MockStudent.swift in Sources */,
+				2A2E26DC21607C600012D9EA /* MockUser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
