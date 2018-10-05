@@ -51,6 +51,10 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
     private let lock: Lock = Mutex()
     private var link = MemoryLink<K, T>()
     
+    public var firstObject: T? {
+        return link.head?.value
+    }
+    
     public init() {}
 }
 

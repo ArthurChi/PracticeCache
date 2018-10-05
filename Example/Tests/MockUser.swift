@@ -16,12 +16,18 @@ class Account: Codable {
     }
 }
 
-struct User: Codable {
+struct User: Codable, Equatable {
     var isActive: Bool
     var account: Account
     
     init(isActive: Bool, account: Account) {
         self.isActive = isActive
         self.account = account
+    }
+    
+    public static func == (lhs: User, rhs: User) -> Bool {
+        return
+            lhs.account.alias == rhs.account.alias &&
+                lhs.isActive == rhs.isActive
     }
 }
