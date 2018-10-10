@@ -43,7 +43,7 @@ class MemoryCacheTests: XCTestCase {
         wait(for: [ext], timeout: 200)
     }
     
-    func test_lru_query() {
+    func test_lru_query_trail() {
         var memoryCache = MemoryCache<String, User>()
         
         let key = "1"
@@ -62,6 +62,10 @@ class MemoryCacheTests: XCTestCase {
         XCTAssertNotNil(u)
         XCTAssertNotNil(firstUser)
         XCTAssertEqual(u, firstUser)
+    }
+    
+    func test_lru_query_not_trail() {
+        
     }
 
 }

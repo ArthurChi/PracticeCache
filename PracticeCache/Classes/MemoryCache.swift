@@ -9,29 +9,67 @@ import Foundation
 
 public protocol MemoryCacheable: CacheStandard { }
 
-struct MemoryLinkNode<V: Codable> {
+class MemoryLinkNode<Key: Hashable, V: Codable> {
     var time: TimeInterval
     var cost: NSInteger
+    
+    var key: Key
     var value: V
+    
+    var next: MemoryLinkNode?
+    var pre: MemoryLinkNode?
+    
+    init(key:Key, value: V, cost: NSInteger = 0, time: TimeInterval = Date().timeIntervalSince1970) {
+        self.key = key
+        self.value = value
+        self.cost = cost
+        self.time = time
+    }
+}
+
+extension MemoryLinkNode: Equatable {
+    static func == (lhs: MemoryLinkNode<Key, V>, rhs: MemoryLinkNode<Key, V>) -> Bool {
+        return lhs.key == rhs.key
+    }
 }
 
 struct MemoryLink<Key: Hashable, T: Codable> {
     
-    var head: MemoryLinkNode<T>?
-    var trail: MemoryLinkNode<T>?
+    var head: MemoryLinkNode<Key, T>?
+    var trail: MemoryLinkNode<Key, T>?
     private(set) var totalCost: Int = 0
     private(set) var totalCount: Int = 0
-    private(set) var dict = [Key : MemoryLinkNode<T>]()
+    private(set) var dict = [Key : MemoryLinkNode<Key, T>]()
     
-    func insertNodeToHead(_ node: MemoryLinkNode<T>) {
+    mutating func insertNodeToHead(_ node: MemoryLinkNode<Key, T>) {
+        dict[node.key] = node
         
+        if let head = head {
+            node.next = head
+            head.pre = node
+            self.head = node
+        } else {
+            self.head = node
+            self.trail = self.head
+        }
     }
     
-    func bringNodeToHead(_ node: MemoryLinkNode<T>) {
+    mutating func bringNodeToHead(_ node: MemoryLinkNode<Key, T>) {
+        if head == node { return }
         
+        if trail == node {
+            trail = node.pre
+            trail?.next = nil
+            node.next = head
+            node.pre = nil
+            head?.pre = node
+            head = node
+        } else {
+            print(132)
+        }
     }
     
-    func removeNode(_ node: MemoryLinkNode<T>) {
+    func removeNode(_ node: MemoryLinkNode<Key, T>) {
         
     }
     
@@ -64,16 +102,22 @@ extension MemoryCache: MemoryCacheable {
     }
     
     public mutating func query(key: Key) -> T? {
-        return link.dict[key]?.value
+        if let node = link.dict[key] {
+            node.time = Date().timeIntervalSince1970
+            link.bringNodeToHead(node)
+            return node.value
+        }
+        
+        return nil
     }
     
     public mutating func save(value: T, for key: Key) {
-        if var node = link.dict[key] {
+        if let node = link.dict[key] {
             node.value = value
             node.time = Date().timeIntervalSince1970
             link.bringNodeToHead(node)
         } else {
-            let node = MemoryLinkNode(time: Date().timeIntervalSince1970, cost: 0, value: value)
+            let node = MemoryLinkNode<Key, T>(key: key, value: value)
             link.insertNodeToHead(node)
         }
     }
