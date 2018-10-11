@@ -38,11 +38,11 @@ struct MemoryLink<Key: Hashable, T: Codable> {
     var head: MemoryLinkNode<Key, T>?
     var trail: MemoryLinkNode<Key, T>?
     private(set) var totalCost: Int = 0
-    private(set) var totalCount: Int = 0
     private(set) var dict = [Key : MemoryLinkNode<Key, T>]()
     
     mutating func insertNodeToHead(_ node: MemoryLinkNode<Key, T>) {
         dict[node.key] = node
+        totalCost += node.cost
         
         if let head = head {
             node.next = head
@@ -71,16 +71,22 @@ struct MemoryLink<Key: Hashable, T: Codable> {
         head = node
     }
     
-    func removeNode(_ node: MemoryLinkNode<Key, T>) {
-        
+    mutating func remove(key: Key) {
+        if let node = dict.removeValue(forKey: key) {
+            totalCost -= node.cost
+            
+            node.pre?.next = node.next
+            node.next?.pre = node.pre
+            if node == head { head = node.next }
+            if node == trail { trail = node.pre }
+        }
     }
     
-    func removeTrailNode() {
-        
-    }
-    
-    func removeAll() {
-        
+    mutating func removeAll() {
+        head = nil
+        trail = nil
+        totalCost = 0
+        dict.removeAll()
     }
 }
 
@@ -125,7 +131,7 @@ extension MemoryCache: MemoryCacheable {
     }
     
     public mutating func remove(key: Key) {
-        
+        link.remove(key: key)
     }
     
     public mutating func removeAll() {
