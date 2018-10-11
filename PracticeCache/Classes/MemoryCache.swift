@@ -60,13 +60,15 @@ struct MemoryLink<Key: Hashable, T: Codable> {
         if trail == node {
             trail = node.pre
             trail?.next = nil
-            node.next = head
-            node.pre = nil
-            head?.pre = node
-            head = node
         } else {
-            print(132)
+            node.pre?.next = node.next
+            node.next?.pre = node.pre
         }
+        
+        node.next = head
+        node.pre = nil
+        head?.pre = node
+        head = node
     }
     
     func removeNode(_ node: MemoryLinkNode<Key, T>) {

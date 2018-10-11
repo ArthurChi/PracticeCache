@@ -30,9 +30,10 @@ class MemoryCacheTests: XCTestCase {
             
             let user = User(isActive: true, account: Account(alias: "test\(index)"))
             memoryCache.save(value: user, for: "abc\(index)")
-            print(index)
+            print("write is \(index)")
             
             DispatchQueue.global().async {
+                print("read is \(index)")
                 let _ = memoryCache.query(key: "abc\(index)")
                 if index == exeCount - 1 {
                     ext.fulfill()
@@ -65,7 +66,29 @@ class MemoryCacheTests: XCTestCase {
     }
     
     func test_lru_query_not_trail() {
+        var memoryCache = MemoryCache<String, User>()
         
+        let key = "1"
+        let key1 = "2"
+        let key2 = "3"
+        
+        let nilUser = memoryCache.query(key: key)
+        XCTAssertNil(nilUser)
+        
+        let user = User(isActive: true, account: Account(alias: "test123"))
+        memoryCache.save(value: user, for: key)
+        
+        let user1 = User(isActive: true, account: Account(alias: "test456"))
+        memoryCache.save(value: user1, for: key1)
+        
+        let user2 = User(isActive: true, account: Account(alias: "test789"))
+        memoryCache.save(value: user2, for: key2)
+        
+        let u = memoryCache.query(key: key1)
+        let firstUser = memoryCache.firstObject
+        XCTAssertNotNil(u)
+        XCTAssertNotNil(firstUser)
+        XCTAssertEqual(u, firstUser)
     }
 
 }
