@@ -32,6 +32,8 @@ class MemoryCacheTests: XCTestCase {
             memoryCache.save(value: user, for: "abc\(index)")
             print("write is \(index)")
             
+            print(Thread.current)
+            
             DispatchQueue.global().async {
                 print("read is \(index)")
                 let _ = memoryCache.query(key: "abc\(index)")

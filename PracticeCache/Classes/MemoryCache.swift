@@ -40,6 +40,8 @@ struct MemoryLink<Key: Hashable, T: Codable> {
     private(set) var totalCost: Int = 0
     private(set) var dict = [Key : MemoryLinkNode<Key, T>]()
     
+    private var lock = Mutex()
+    
     mutating func insertNodeToHead(_ node: MemoryLinkNode<Key, T>) {
         dict[node.key] = node
         totalCost += node.cost
@@ -97,11 +99,20 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
     private let lock: Lock = Mutex()
     private var link = MemoryLink<K, T>()
     
+    private(set) var countLimit: Int = Int.max
+    private(set) var costLimit: Int = Int.max
+    private(set) var ageLimit: TimeInterval = Double.greatestFiniteMagnitude
+    
     public var firstObject: T? {
         return link.head?.value
     }
     
     public init() {}
+}
+
+extension MemoryCache {
+    
+    
 }
 
 extension MemoryCache: MemoryCacheable {
@@ -110,6 +121,12 @@ extension MemoryCache: MemoryCacheable {
     }
     
     public mutating func query(key: Key) -> T? {
+        lock.lock()
+        
+        defer {
+            lock.unLock()
+        }
+        
         if let node = link.dict[key] {
             node.time = Date().timeIntervalSince1970
             link.bringNodeToHead(node)
@@ -120,6 +137,12 @@ extension MemoryCache: MemoryCacheable {
     }
     
     public mutating func save(value: T, for key: Key) {
+        lock.lock()
+        
+        defer {
+            lock.unLock()
+        }
+        
         if let node = link.dict[key] {
             node.value = value
             node.time = Date().timeIntervalSince1970
