@@ -11,6 +11,7 @@
 		2A2E26DC21607C600012D9EA /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2E26DB21607C600012D9EA /* MockUser.swift */; };
 		2A517C06215FAA7D002DC160 /* MockMemoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A517C05215FAA7D002DC160 /* MockMemoryCache.swift */; };
 		2A517C08215FAA99002DC160 /* MemoryCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A517C07215FAA99002DC160 /* MemoryCacheTests.swift */; };
+		2A594F4C217D63070052B2AE /* MemoryCacheLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A594F4B217D63070052B2AE /* MemoryCacheLinkTests.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -39,6 +40,7 @@
 		2A517C05215FAA7D002DC160 /* MockMemoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMemoryCache.swift; sourceTree = "<group>"; };
 		2A517C07215FAA99002DC160 /* MemoryCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCacheTests.swift; sourceTree = "<group>"; };
 		2A517C0921605496002DC160 /* Readme.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Readme.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		2A594F4B217D63070052B2AE /* MemoryCacheLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCacheLinkTests.swift; sourceTree = "<group>"; };
 		57FE7E338BAD16E4523A700B /* Pods-PracticeCache_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PracticeCache_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PracticeCache_Tests/Pods-PracticeCache_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* PracticeCache_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PracticeCache_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				2A517C07215FAA99002DC160 /* MemoryCacheTests.swift */,
+				2A594F4B217D63070052B2AE /* MemoryCacheLinkTests.swift */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A594F4C217D63070052B2AE /* MemoryCacheLinkTests.swift in Sources */,
 				2A517C08215FAA99002DC160 /* MemoryCacheTests.swift in Sources */,
 				2A2E26DC21607C600012D9EA /* MockUser.swift in Sources */,
 			);
