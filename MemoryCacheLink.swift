@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol NodeStandard: class, CustomStringConvertible {
+protocol NodeStandard: class, CustomStringConvertible {
     associatedtype Key where Key: Hashable
     associatedtype Value
     
@@ -35,7 +35,7 @@ protocol LinkedNodeListIndexStandard: Comparable {
 }
 
 extension LinkedNodeListIndexStandard {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs.node, rhs.node) {
         case let (left?, right?):
             return left.next === right.next
@@ -46,21 +46,21 @@ extension LinkedNodeListIndexStandard {
         }
     }
     
-    public static func < (lhs: Self, rhs: Self) -> Bool {
+    static public func < (lhs: Self, rhs: Self) -> Bool {
         guard lhs != rhs else { return false }
         let nodes = sequence(first: lhs.node, next: { $0?.next })
         return nodes.contains(where: { $0 === rhs.node })
     }
 }
 
-public protocol LinkedNodeListStandard: Collection where Index: LinkedNodeListIndexStandard {
+protocol LinkedNodeListStandard: Collection where Index: LinkedNodeListIndexStandard {
     associatedtype Node where Self.Node == Index.Node
     associatedtype Key where Self.Key == Node.Key
     associatedtype Value where Self.Value == Node.Value
     
     var head: Node? { get }
     var trail: Node? { get }
-    subscript(key: Key) -> Node? { get set }
+    subscript(key: Key) -> Value? { mutating get set }
 }
 
 final public class LinkNode<K: Hashable, V>: NodeStandard {
@@ -99,20 +99,17 @@ public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
     
     public init() {}
     
-    // head-first insertion
-    public mutating func push(_ value: Value, for key: Key) {
-        head = Node(key: key, value: value, next: head)
-        if trail == nil {
-            trail = head
+    public subscript(key: K) -> V? {
+        mutating get {
+            return value(for: key)
         }
-    }
-    
-    public subscript(key: K) -> LinkNode<K, V>? {
-        get {
-            return head!
-        }
+        
         set {
-            
+            if let value = newValue {
+                push(value, for: key)
+            } else {
+                remove(for: key)
+            }
         }
     }
 }
@@ -132,5 +129,64 @@ extension LinkedList: Collection {
     
     public subscript(position: Index) -> Node {
         return position.node!
+    }
+}
+
+
+// MARK: - add
+extension LinkedList {
+    // head-first insertion
+    public mutating func push(_ value: Value, for key: Key) {
+        if let node = dictContainer[key] {
+            bringNodeToHead(node)
+        } else {
+            let node = Node(key: key, value: value, next: head)
+            dictContainer[key] = node
+            head = node
+            if trail == nil {
+                trail = head
+            }
+        }
+    }
+    
+    private mutating func push(_ node: Node) {
+        push(node.value, for: node.key)
+    }
+}
+
+// MARK: - remove
+extension LinkedList {
+    @discardableResult
+    public mutating func remove(for key: Key) -> V? {
+        if let node = dictContainer.removeValue(forKey: key) {
+            return node.value
+        }
+        
+        return nil
+    }
+    
+    @discardableResult
+    private mutating func remove(_ node: Node) -> V? {
+        return remove(for: node.key)
+    }
+}
+
+// MARK: - query
+extension LinkedList {
+    public mutating func value(for key: Key) -> V? {
+        if let node = dictContainer[key] {
+            bringNodeToHead(node)
+            return node.value
+        }
+        
+        return nil
+    }
+}
+
+// MARK: - update
+extension LinkedList {
+    private mutating func bringNodeToHead(_ node: Node) {
+        assert(dictContainer[node.key] != nil)
+        
     }
 }
