@@ -20,8 +20,8 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
     private(set) var costLimit: Int = Int.max
     private(set) var ageLimit: TimeInterval = Double.greatestFiniteMagnitude
     
-    public var firstObject: T? {
-        return link.head?.value
+    public var first: T? {
+        return link.first
     }
     
     public init() {}

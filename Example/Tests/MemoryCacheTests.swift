@@ -61,7 +61,7 @@ class MemoryCacheTests: XCTestCase {
         let user1 = User(isActive: true, account: Account(alias: "test456"))
         memoryCache.save(value: user1, for: key1)
         let u = memoryCache.query(key: key)
-        let firstUser = memoryCache.firstObject
+        let firstUser = memoryCache.first
         XCTAssertNotNil(u)
         XCTAssertNotNil(firstUser)
         XCTAssertEqual(u, firstUser)
@@ -87,7 +87,7 @@ class MemoryCacheTests: XCTestCase {
         memoryCache.save(value: user2, for: key2)
         
         let u = memoryCache.query(key: key1)
-        let firstUser = memoryCache.firstObject
+        let firstUser = memoryCache.first
         XCTAssertNotNil(u)
         XCTAssertNotNil(firstUser)
         XCTAssertEqual(u, firstUser)
