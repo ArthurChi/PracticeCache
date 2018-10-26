@@ -7,14 +7,15 @@
 
 import Foundation
 
-protocol NodeStandard: class, CustomStringConvertible {
+protocol NodeStandard: class, Equatable, CustomStringConvertible {
     associatedtype Key where Key: Hashable
     associatedtype Value
     
     var key: Key { get }
     var value: Value { get }
+    var pre: Self? { get }
     var next: Self? { get }
-    init(key: Key, value: Value, next: Self?)
+    init(key: Key, value: Value, pre: Self?, next: Self?)
 }
 
 extension NodeStandard {
@@ -23,8 +24,8 @@ extension NodeStandard {
         return "\(value) -> \(next)"
     }
     
-    init(key: Key, value: Value, next: Self? = nil) {
-        self.init(key: key, value: value, next: next)
+    init(key: Key, value: Value, pre: Self? = nil, next: Self? = nil) {
+        self.init(key: key, value: value, pre: pre, next: next)
     }
 }
 
@@ -53,7 +54,7 @@ extension LinkedNodeListIndexStandard {
     }
 }
 
-protocol LinkedNodeListStandard: Collection where Index: LinkedNodeListIndexStandard {
+protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNodeListIndexStandard {
     associatedtype Node where Self.Node == Index.Node
     associatedtype Key where Self.Key == Node.Key
     associatedtype Value where Self.Value == Node.Value
@@ -69,12 +70,18 @@ final public class LinkNode<K: Hashable, V>: NodeStandard {
     
     public var key: Key
     public var value: Value
-    public var next: LinkNode?
+    public weak var pre: LinkNode?
+    public weak var next: LinkNode?
     
-    public init(key: Key, value: Value, next: LinkNode? = nil) {
+    public init(key: Key, value: Value, pre: LinkNode? = nil, next: LinkNode? = nil) {
         self.key = key
         self.value = value
+        self.pre = pre
         self.next = next
+    }
+    
+    public static func == (lhs: LinkNode, rhs: LinkNode) -> Bool {
+        return lhs.key == rhs.key
     }
 }
 
@@ -114,21 +121,26 @@ public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
     }
 }
 
-extension LinkedList: Collection {
+extension LinkedList: BidirectionalCollection {
     public var startIndex: Index {
         return Index(node: head)
     }
-    
+
     public var endIndex: Index {
         return Index(node: trail?.next)
     }
-    
+
+    public func index(before i: Index) -> Index {
+        return Index(node: i.node?.pre)
+    }
+
     public func index(after i: Index) -> Index {
         return Index(node: i.node?.next)
     }
-    
-    public subscript(position: Index) -> Node {
-        return position.node!
+
+    public subscript(position: Index) -> Value {
+        if position == endIndex { return trail!.value }
+        return position.node!.value
     }
 }
 
@@ -142,6 +154,7 @@ extension LinkedList {
         } else {
             let node = Node(key: key, value: value, next: head)
             dictContainer[key] = node
+            head?.pre = node
             head = node
             if trail == nil {
                 trail = head
@@ -159,6 +172,19 @@ extension LinkedList {
     @discardableResult
     public mutating func remove(for key: Key) -> V? {
         if let node = dictContainer.removeValue(forKey: key) {
+            if node == head {
+                node.next?.pre = nil
+                head = node.next
+                node.next = nil
+            } else if node == trail {
+                node.pre?.next = nil
+                trail = node.pre
+                node.pre = nil
+            } else {
+                node.pre?.next = node.next
+                node.next?.pre = node.pre
+            }
+            
             return node.value
         }
         
@@ -186,7 +212,17 @@ extension LinkedList {
 // MARK: - update
 extension LinkedList {
     private mutating func bringNodeToHead(_ node: Node) {
-        assert(dictContainer[node.key] != nil)
+        if node == head { return }
         
+        if node == trail {
+            trail = trail?.pre
+        } else {
+            node.next?.pre = node.pre
+            node.pre?.next = node.next
+        }
+        
+        node.next = head
+        head?.pre = node
+        head = node
     }
 }
