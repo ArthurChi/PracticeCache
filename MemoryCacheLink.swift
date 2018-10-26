@@ -93,7 +93,6 @@ public struct LinkedNodeListIndex<K: Hashable, V>: LinkedNodeListIndexStandard {
 }
 
 public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
-    
     public typealias Key = K
     public typealias Value = V
     public typealias Node = LinkNode<K, V>
@@ -117,6 +116,18 @@ public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
             } else {
                 remove(for: key)
             }
+        }
+    }
+    
+    public func contains(where predicate: (Key) throws -> Bool) rethrows -> Bool {
+        do {
+            for key in dictContainer.keys where try predicate(key) {
+                return true
+            }
+            
+            return false
+        } catch {
+            return false
         }
     }
 }
@@ -194,6 +205,12 @@ extension LinkedList {
     @discardableResult
     private mutating func remove(_ node: Node) -> V? {
         return remove(for: node.key)
+    }
+    
+    mutating func removeAll() {
+        head = nil
+        trail = nil
+        dictContainer.removeAll()
     }
 }
 
