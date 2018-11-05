@@ -7,63 +7,6 @@
 
 import Foundation
 
-protocol NodeStandard: class, Equatable, CustomStringConvertible {
-    associatedtype Key where Key: Hashable
-    associatedtype Value
-    
-    var key: Key { get }
-    var value: Value { get }
-    var pre: Self? { get }
-    var next: Self? { get }
-    init(key: Key, value: Value, pre: Self?, next: Self?)
-}
-
-extension NodeStandard {
-    public var description: String {
-        guard let next = next else { return "\(value)" }
-        return "\(value) -> \(next)"
-    }
-    
-    init(key: Key, value: Value, pre: Self? = nil, next: Self? = nil) {
-        self.init(key: key, value: value, pre: pre, next: next)
-    }
-}
-
-protocol LinkedNodeListIndexStandard: Comparable {
-    associatedtype Node: NodeStandard
-    var node: Node? { get }
-    init(node: Node?)
-}
-
-extension LinkedNodeListIndexStandard {
-    static public func == (lhs: Self, rhs: Self) -> Bool {
-        switch (lhs.node, rhs.node) {
-        case let (left?, right?):
-            return left.next === right.next
-        case (nil, nil):
-            return true
-        default:
-            return false
-        }
-    }
-    
-    static public func < (lhs: Self, rhs: Self) -> Bool {
-        guard lhs != rhs else { return false }
-        let nodes = sequence(first: lhs.node, next: { $0?.next })
-        return nodes.contains(where: { $0 === rhs.node })
-    }
-}
-
-protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNodeListIndexStandard {
-    associatedtype Node where Self.Node == Index.Node
-    associatedtype Key where Self.Key == Node.Key
-    associatedtype Value where Self.Value == Node.Value
-    
-    var head: Node? { get }
-    var trail: Node? { get }
-    subscript(key: Key) -> Value? { mutating get set }
-}
-
 final public class LinkNode<K: Hashable, V>: NodeStandard {
     public typealias Key = K
     public typealias Value = V

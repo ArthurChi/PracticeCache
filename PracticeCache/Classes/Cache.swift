@@ -7,31 +7,6 @@
 
 import Foundation
 
-public protocol CacheStandard {
-    associatedtype Value: Codable
-    associatedtype Key: Hashable
-    mutating func containsObject(key: Key) -> Bool
-    mutating func query(key: Key) -> Value?
-    mutating func save(value: Value, for key: Key)
-    mutating func remove(key: Key)
-    mutating func removeAll()
-}
-
-public protocol CacheAsyncStandard {
-    associatedtype Value: Codable
-    associatedtype Key: Hashable
-    mutating func containsObject(key: Key, _ result: @escaping ((_ key: Key, _ contain: Bool) -> Void))
-    mutating func query(key: Key, _ result: @escaping ((_ key: Key, _ value: Value?) -> Void))
-    mutating func save(value: Value, for key: Key, _ result: @escaping (()->Void))
-    mutating func remove(key: Key, _ result: @escaping ((_ key: Key) -> Void))
-    mutating func removeAll(_ result: @escaping (()->Void))
-}
-
-protocol Lock {
-    func lock()
-    func unLock()
-}
-
 final class Mutex: Lock {
     private var mutex: pthread_mutex_t = {
         var mutex = pthread_mutex_t()
