@@ -40,6 +40,7 @@ public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
     public typealias Value = V
     public typealias Node = LinkNode<K, V>
     public typealias Index = LinkedNodeListIndex<K, V>
+    public typealias SubSequence = LinkedList<K, V>
     
     public var head: Node?
     public var trail: Node?
