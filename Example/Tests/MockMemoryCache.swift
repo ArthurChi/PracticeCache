@@ -27,6 +27,14 @@ struct MockMemoryCache<K, V>: MemoryCacheable where K: Hashable, V: Codable {
         
     }
     
+    mutating func save(value: V, for key: K, cost: Int) {
+        
+    }
+    
+    mutating func removeLast() {
+        
+    }
+    
     func remove(key: K) {
         
     }

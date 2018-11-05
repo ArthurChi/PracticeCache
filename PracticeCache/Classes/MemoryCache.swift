@@ -7,7 +7,10 @@
 
 import Foundation
 
-public protocol MemoryCacheable: CacheStandard { }
+public protocol MemoryCacheable: CacheStandard {
+    mutating func save(value: Value, for key: Key, cost: Int)
+    mutating func removeLast()
+}
 
 public struct MemoryCache<Key: Hashable, T: Codable> {
     public typealias K = Key
@@ -15,16 +18,25 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
     
     private let lock: Lock = Mutex()
     private var link = LinkedList<K, T>()
+    private var trimDict = [K:TrimNode]()
     
-    private(set) var countLimit: Int = Int.max
-    private(set) var costLimit: Int = Int.max
-    private(set) var ageLimit: TimeInterval = Double.greatestFiniteMagnitude
+    private(set) var countLimit: Int
+    private(set) var costLimit: Int
+    private(set) var ageLimit: TimeInterval
+    private(set) var autoTrimInterval: TimeInterval
+    
+    private var totalCost: Int = 0
     
     public var first: T? {
         return link.first
     }
     
-    public init() {}
+    public init(countLimit: Int = Int.max, costLimit: Int = Int.max, ageLimit: TimeInterval = Double.greatestFiniteMagnitude, autoTrimInterval: TimeInterval = 5) {
+        self.countLimit = countLimit
+        self.costLimit = costLimit
+        self.ageLimit = ageLimit
+        self.autoTrimInterval = autoTrimInterval
+    }
 }
 
 extension MemoryCache: MemoryCacheable {
@@ -39,24 +51,113 @@ extension MemoryCache: MemoryCacheable {
             lock.unLock()
         }
         
+        trimDict[key]?.updateAge()
         return link.value(for: key)
     }
     
+    // MARK: - save
     public mutating func save(value: T, for key: Key) {
+        save(value: value, for: key, cost: 0)
+    }
+    
+    public mutating func save(value: T, for key: Key, cost: Int) {
         lock.lock()
         
         defer {
             lock.unLock()
         }
         
+        trimDict[key] = TrimNode(cost: cost)
+        totalCost += cost
+        
         link.push(value, for: key)
     }
     
+    // MARK: - remove
     public mutating func remove(key: Key) {
+        lock.lock()
+        
+        defer {
+            lock.unLock()
+        }
+        
+        let cost = trimDict.removeValue(forKey: key)?.cost ?? 0
+        totalCost -= cost
         link.remove(for: key)
     }
     
     public mutating func removeAll() {
+        lock.lock()
+        
+        defer {
+            lock.unLock()
+        }
+        
+        trimDict.removeAll()
+        totalCost = 0
         link.removeAll()
+    }
+    
+    public mutating func removeLast() {
+        lock.lock()
+        
+        defer {
+            lock.unLock()
+        }
+        
+        if let key = link.removeLast()?.0, let cost = trimDict.removeValue(forKey: key)?.cost {
+            totalCost -= cost
+        }
+    }
+}
+
+extension MemoryCache: AutoTrimable {
+    mutating func trimToCount(_ countLimit: Int) {
+        if countLimit <= 0 {
+            self.removeAll()
+        } else {
+            while link.count >= countLimit, !link.isEmpty {
+                self.removeLast()
+            }
+        }
+    }
+    
+    mutating func trimToCost(_ costLimit: Int) {
+        if costLimit <= 0 {
+            self.removeAll()
+        } else {
+            while totalCost >= costLimit, totalCost > 0 {
+                self.removeLast()
+            }
+        }
+    }
+    
+    mutating func trimToAge(_ ageLimit: TimeInterval) {
+        if ageLimit <= 0 {
+            self.removeAll()
+        } else {
+            let now = Date().timeIntervalSince1970
+            while
+                let lastNodeKey = link.endIndex.node?.key,
+                let lastTrimNode = trimDict[lastNodeKey],
+                now - lastTrimNode.age > ageLimit {
+                self.removeLast()
+            }
+        }
+    }
+}
+
+extension MemoryCache {
+    private struct TrimNode: Hashable {
+        private(set) var cost: Int
+        private(set) var age: TimeInterval = Date().timeIntervalSince1970
+        
+        mutating func updateAge() {
+            self.age = Date().timeIntervalSince1970
+        }
+        
+        init(cost: Int) {
+            self.cost = cost
+        }
     }
 }

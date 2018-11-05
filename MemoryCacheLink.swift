@@ -124,7 +124,7 @@ extension LinkedList {
 // MARK: - remove
 extension LinkedList {
     @discardableResult
-    public mutating func remove(for key: Key) -> V? {
+    public mutating func remove(for key: Key) -> (Key, Value)? {
         if let node = dictContainer.removeValue(forKey: key) {
             if node == head {
                 node.next?.pre = nil
@@ -139,14 +139,14 @@ extension LinkedList {
                 node.next?.pre = node.pre
             }
             
-            return node.value
+            return (node.key, node.value)
         }
         
         return nil
     }
     
     @discardableResult
-    private mutating func remove(_ node: Node) -> V? {
+    private mutating func remove(_ node: Node) -> (Key, Value)? {
         return remove(for: node.key)
     }
     
@@ -154,6 +154,19 @@ extension LinkedList {
         head = nil
         trail = nil
         dictContainer.removeAll()
+    }
+    
+    @discardableResult
+    mutating func removeLast() -> (Key, Value)? {
+        let removedNode = trail
+        trail = trail?.pre
+        trail?.next?.pre = nil
+        trail?.next = nil
+        if let removedNode = removedNode {
+            return (removedNode.key, removedNode.value)
+        }
+        
+        return nil
     }
 }
 
