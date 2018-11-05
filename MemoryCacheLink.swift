@@ -85,6 +85,7 @@ extension LinkedList: BidirectionalCollection {
     }
 
     public func index(before i: Index) -> Index {
+        if i == endIndex { return Index(node: trail) }
         return Index(node: i.node?.pre)
     }
 
@@ -93,7 +94,6 @@ extension LinkedList: BidirectionalCollection {
     }
 
     public subscript(position: Index) -> Value {
-        if position == endIndex { return trail!.value }
         return position.node!.value
     }
 }
@@ -189,6 +189,7 @@ extension LinkedList {
         
         if node == trail {
             trail = trail?.pre
+            trail?.next = nil
         } else {
             node.next?.pre = node.pre
             node.pre?.next = node.next

@@ -40,4 +40,20 @@ class MemoryCacheLinkTests: XCTestCase {
         
         XCTAssert(link.last == link["0"])
     }
+    
+    func test_empty() {
+        var link = LinkedList<String, Int>()
+        XCTAssert(link.isEmpty)
+        link.push(1, for: "1")
+        XCTAssert(!link.isEmpty)
+    }
+    
+    func test_bring_to_head() {
+        var link = LinkedList<String, Int>()
+        link.push(1, for: "1")
+        link.push(2, for: "2")
+        XCTAssert(link.first == 2)
+        link.push(1, for: "1")
+        XCTAssert(link.first == 1, "\(String(describing: link.first))")
+    }
 }
