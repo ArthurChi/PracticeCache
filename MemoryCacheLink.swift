@@ -150,18 +150,24 @@ extension LinkedList {
         return remove(for: node.key)
     }
     
-    mutating func removeAll() {
+    public mutating func removeAll() {
         head = nil
         trail = nil
         dictContainer.removeAll()
     }
     
     @discardableResult
-    mutating func removeLast() -> (Key, Value)? {
+    public mutating func removeTrail() -> (Key, Value)? {
         let removedNode = trail
-        trail = trail?.pre
-        trail?.next?.pre = nil
-        trail?.next = nil
+        if trail == head {
+            trail = nil
+            head = nil
+        } else {
+            trail = trail?.pre
+            trail?.next?.pre = nil
+            trail?.next = nil
+        }
+        
         if let removedNode = removedNode {
             return (removedNode.key, removedNode.value)
         }

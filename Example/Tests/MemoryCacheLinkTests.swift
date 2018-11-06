@@ -56,4 +56,43 @@ class MemoryCacheLinkTests: XCTestCase {
         link.push(1, for: "1")
         XCTAssert(link.first == 1, "\(String(describing: link.first))")
     }
+    
+    func test_remove_last() {
+        var link = LinkedList<String, Int>()
+        link.push(1, for: "1")
+        link.push(2, for: "2")
+        
+        XCTAssert(link.removeTrail()?.0 == "1")
+    }
+    
+    func test_remove_all() {
+        var link = LinkedList<String, Int>()
+        link.push(1, for: "1")
+        link.push(2, for: "2")
+        link.removeAll()
+        
+        XCTAssert(link.isEmpty)
+    }
+    
+    func test_remove_trail_and_isEmpty() {
+        var link = LinkedList<String, Int>()
+        link.push(1, for: "1")
+        link.push(2, for: "2")
+        
+        XCTAssert(link.removeTrail()?.0 == "1")
+        XCTAssert(link.removeTrail()?.0 == "2")
+        
+        XCTAssert(link.isEmpty)
+    }
+    
+    func test_remove_and_isEmpty() {
+        var link = LinkedList<String, Int>()
+        link.push(1, for: "1")
+        link.push(2, for: "2")
+        
+        link.remove(for: "1")
+        link.remove(for: "2")
+        
+        XCTAssert(link.isEmpty)
+    }
 }

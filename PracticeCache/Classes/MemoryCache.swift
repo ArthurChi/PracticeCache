@@ -62,7 +62,7 @@ extension MemoryCache: MemoryCacheable {
     
     public mutating func save(value: T, for key: Key, cost: Int) {
         lock.lock()
-        
+
         defer {
             lock.unLock()
         }
@@ -105,7 +105,7 @@ extension MemoryCache: MemoryCacheable {
             lock.unLock()
         }
         
-        if let key = link.removeLast()?.0, let cost = trimDict.removeValue(forKey: key)?.cost {
+        if let key = link.removeTrail()?.0, let cost = trimDict.removeValue(forKey: key)?.cost {
             totalCost -= cost
         }
     }
