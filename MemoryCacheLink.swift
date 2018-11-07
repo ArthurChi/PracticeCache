@@ -11,10 +11,10 @@ final public class LinkNode<K: Hashable, V>: NodeStandard {
     public typealias Key = K
     public typealias Value = V
     
-    public var key: Key
-    public var value: Value
-    public weak var pre: LinkNode?
-    public weak var next: LinkNode?
+    public private(set) var key: Key
+    public private(set) var value: Value
+    public fileprivate(set) weak var pre: LinkNode?
+    public fileprivate(set) weak var next: LinkNode?
     
     public init(key: Key, value: Value, pre: LinkNode? = nil, next: LinkNode? = nil) {
         self.key = key

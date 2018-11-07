@@ -112,7 +112,7 @@ extension MemoryCache: MemoryCacheable {
 }
 
 extension MemoryCache: AutoTrimable {
-    mutating func trimToCount(_ countLimit: Int) {
+    public mutating func trimToCount(_ countLimit: Int) {
         if countLimit <= 0 {
             self.removeAll()
         } else {
@@ -122,7 +122,7 @@ extension MemoryCache: AutoTrimable {
         }
     }
     
-    mutating func trimToCost(_ costLimit: Int) {
+    public mutating func trimToCost(_ costLimit: Int) {
         if costLimit <= 0 {
             self.removeAll()
         } else {
@@ -132,7 +132,7 @@ extension MemoryCache: AutoTrimable {
         }
     }
     
-    mutating func trimToAge(_ ageLimit: TimeInterval) {
+    public mutating func trimToAge(_ ageLimit: TimeInterval) {
         if ageLimit <= 0 {
             self.removeAll()
         } else {
