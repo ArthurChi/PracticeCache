@@ -169,6 +169,7 @@ extension LinkedList {
         }
         
         if let removedNode = removedNode {
+            dictContainer.removeValue(forKey: removedNode.key)
             return (removedNode.key, removedNode.value)
         }
         

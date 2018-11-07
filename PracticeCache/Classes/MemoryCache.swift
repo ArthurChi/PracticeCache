@@ -25,7 +25,7 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
     private(set) var ageLimit: TimeInterval
     private(set) var autoTrimInterval: TimeInterval
     
-    private var totalCost: Int = 0
+    public private(set) var totalCost: Int = 0
     
     public var first: T? {
         return link.first

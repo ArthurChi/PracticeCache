@@ -85,4 +85,34 @@ class MemoryCacheTests: XCTestCase {
         XCTAssertEqual(u, firstUser)
     }
 
+    func test_remove_by_cost() {
+        var memoryCache = MemoryCache<String, User>()
+        
+        let key = "1"
+        let key1 = "2"
+        let key2 = "3"
+        
+        let user = User(isActive: true, account: Account(alias: "test123"))
+        memoryCache.save(value: user, for: key, cost: 10)
+        XCTAssert(memoryCache.totalCost == 10)
+        
+        let user1 = User(isActive: true, account: Account(alias: "test456"))
+        memoryCache.save(value: user1, for: key1, cost: 20)
+        XCTAssert(memoryCache.totalCost == 30)
+        
+        let user2 = User(isActive: true, account: Account(alias: "test789"))
+        memoryCache.save(value: user2, for: key2, cost: 30)
+        XCTAssert(memoryCache.totalCost == 60)
+        
+        memoryCache.trimToCost(40)
+        
+        XCTAssert(memoryCache.query(key: "1") == nil)
+        XCTAssert(memoryCache.query(key: "2") == nil)
+        XCTAssert(memoryCache.query(key: "3") != nil)
+        XCTAssert(memoryCache.totalCost == 30)
+    }
+    
+    func test_remove_by_age() {
+        
+    }
 }
