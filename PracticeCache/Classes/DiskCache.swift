@@ -7,60 +7,59 @@
 
 import Foundation
 
-protocol DiskCacheable: CacheStandard, CacheAsyncStandard {
+public protocol DiskCacheable: CacheStandard, CacheAsyncStandard {
     init(path: URL)
 }
 
-struct DiskCache<T: Codable>: DiskCacheable {
-    typealias ValueType = T
+public struct DiskCache<K: Hashable, V: Codable>: DiskCacheable {
     
     private var path: URL
     
-    init(path: URL) {
+    public init(path: URL) {
         self.path = path
     }
 }
 
 extension DiskCache {
-    func containsObject(key: String) -> Bool {
+    public func containsObject(key: K) -> Bool {
         return true
     }
     
-    func query(key: String) -> T? {
+    public func query(key: K) -> V? {
         return nil
     }
     
-    func save(value: T, for key: String) {
+    public func save(value: V, for key: K) {
         
     }
     
-    func remove(key: String) {
+    public func remove(key: K) {
         
     }
     
-    func removeAll() {
+    public func removeAll() {
         
     }
 }
 
 extension DiskCache {
-    func containsObject(key: String, _ result: @escaping ((String, Bool) -> Void)) {
+    public func containsObject(key: K, _ result: @escaping ((K, Bool) -> Void)) {
         
     }
     
-    func query(key: String, _ result: @escaping ((String, T?) -> Void)) {
+    public func query(key: K, _ result: @escaping ((K, V?) -> Void)) {
         
     }
     
-    func save(value: T, for key: String, _ result: @escaping (() -> Void)) {
+    public func save(value: V, for key: K, _ result: @escaping (() -> Void)) {
         
     }
     
-    func remove(key: String, _ result: @escaping ((String) -> Void)) {
+    public func remove(key: K, _ result: @escaping ((K) -> Void)) {
         
     }
     
-    func removeAll(_ result: @escaping (() -> Void)) {
+    public func removeAll(_ result: @escaping (() -> Void)) {
         
     }
 }
