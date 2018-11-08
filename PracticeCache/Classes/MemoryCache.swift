@@ -12,12 +12,10 @@ public protocol MemoryCacheable: CacheStandard {
     mutating func removeLast()
 }
 
-public struct MemoryCache<Key: Hashable, T: Codable> {
-    public typealias K = Key
-    public typealias ValueType = T
+public struct MemoryCache<K: Hashable, V: Codable> {
     
     private let lock: Lock = Mutex()
-    private var link = LinkedList<K, T>()
+    private var link = LinkedList<K, V>()
     private var trimDict = [K:TrimNode]()
     
     private(set) var countLimit: Int
@@ -27,7 +25,7 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
     
     public private(set) var totalCost: Int = 0
     
-    public var first: T? {
+    public var first: V? {
         return link.first
     }
     
@@ -40,11 +38,11 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
 }
 
 extension MemoryCache: MemoryCacheable {
-    public func containsObject(key: Key) -> Bool {
+    public func containsObject(key: K) -> Bool {
         return link.contains(where: { $0 == key })
     }
     
-    public mutating func query(key: Key) -> T? {
+    public mutating func query(key: K) -> V? {
         lock.lock()
         
         defer {
@@ -56,11 +54,11 @@ extension MemoryCache: MemoryCacheable {
     }
     
     // MARK: - save
-    public mutating func save(value: T, for key: Key) {
+    public mutating func save(value: V, for key: K) {
         save(value: value, for: key, cost: 0)
     }
     
-    public mutating func save(value: T, for key: Key, cost: Int) {
+    public mutating func save(value: V, for key: K, cost: Int) {
         lock.lock()
 
         defer {
@@ -74,7 +72,7 @@ extension MemoryCache: MemoryCacheable {
     }
     
     // MARK: - remove
-    public mutating func remove(key: Key) {
+    public mutating func remove(key: K) {
         lock.lock()
         
         defer {
