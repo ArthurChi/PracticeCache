@@ -40,7 +40,7 @@ public struct MemoryCache<Key: Hashable, T: Codable> {
 }
 
 extension MemoryCache: MemoryCacheable {
-    public mutating func containsObject(key: Key) -> Bool {
+    public func containsObject(key: Key) -> Bool {
         return link.contains(where: { $0 == key })
     }
     
