@@ -23,28 +23,31 @@ final class Mutex: Lock {
     }
 }
 
-struct Cache<K, V, M: CacheStandard, D: CacheStandard & CacheAsyncStandard> where M.Value == V, D.Value == V, M.Key == K, D.Key == K {
+public struct Cache<MT, DT>: Cacheable where MT: CacheStandard, DT: CacheStandard & CacheAsyncStandard, MT.Key == DT.Key, MT.Value == DT.Value {
     
-    typealias Key = K
-    typealias ValueType = V
+    public typealias M = MT
+    public typealias D = DT
+    
+    public typealias Value = M.Value
+    public typealias Key = M.Key
     
     private var memoryCache: M
     private var diskCache: D
     
-    init(memoryCache: M, diskCache: D) {
+    public init(memoryCache: M, diskCache: D) {
         self.memoryCache = memoryCache
         self.diskCache = diskCache
     }
 }
 
 extension Cache: CacheStandard {
-    
-    mutating func containsObject(key: Key) -> Bool {
+
+    public func containsObject(key: Key) -> Bool {
         return memoryCache.containsObject(key: key) || diskCache.containsObject(key: key)
     }
 
-    mutating func query(key: Key) -> ValueType? {
-        var value: ValueType? = memoryCache.query(key: key)
+    mutating public func query(key: Key) -> Value? {
+        var value: Value? = memoryCache.query(key: key)
         if value == nil {
             value = diskCache.query(key: key)
             if let value = value {
@@ -55,24 +58,24 @@ extension Cache: CacheStandard {
         return value
     }
 
-    mutating func save(value: ValueType, for key: Key) {
+    mutating public func save(value: Value, for key: Key) {
         memoryCache.save(value: value, for: key)
         diskCache.save(value: value, for: key)
     }
 
-    mutating func remove(key: Key) {
+    mutating public func remove(key: Key) {
         memoryCache.remove(key: key)
         diskCache.remove(key: key)
     }
 
-    mutating func removeAll() {
+    mutating public func removeAll() {
         memoryCache.removeAll()
         diskCache.removeAll()
     }
 }
 
 extension Cache: CacheAsyncStandard {
-    mutating func containsObject(key: Key, _ result: @escaping ((Key, Bool) -> Void)) {
+    public func containsObject(key: Key, _ result: @escaping ((Key, Bool) -> Void)) {
         if memoryCache.containsObject(key: key) {
             DispatchQueue.global().async {
                 result(key, true)
@@ -82,8 +85,8 @@ extension Cache: CacheAsyncStandard {
         }
     }
 
-    mutating func query(key: Key, _ result: @escaping ((Key, ValueType?) -> Void)) {
-        if let value: ValueType = memoryCache.query(key: key) {
+    mutating public func query(key: Key, _ result: @escaping ((Key, Value?) -> Void)) {
+        if let value: Value = memoryCache.query(key: key) {
             DispatchQueue.global().async {
                 result(key, value)
             }
@@ -92,17 +95,17 @@ extension Cache: CacheAsyncStandard {
         }
     }
 
-    mutating func save(value: ValueType, for key: Key, _ result: @escaping (() -> Void)) {
+    mutating public func save(value: Value, for key: Key, _ result: @escaping (() -> Void)) {
         memoryCache.save(value: value, for: key)
         diskCache.save(value: value, for: key, result)
     }
 
-    mutating func remove(key: Key, _ result: @escaping ((Key) -> Void)) {
+    mutating public func remove(key: Key, _ result: @escaping ((Key) -> Void)) {
         memoryCache.remove(key: key)
         diskCache.remove(key: key, result)
     }
 
-    mutating func removeAll(_ result: @escaping (() -> Void)) {
+    mutating public func removeAll(_ result: @escaping (() -> Void)) {
         memoryCache.removeAll()
         diskCache.removeAll(result)
     }
