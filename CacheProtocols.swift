@@ -8,10 +8,16 @@
 import Foundation
 
 // MARK: - Cache
+public protocol Cacheable {
+    associatedtype M: CacheStandard
+    associatedtype D: CacheStandard & CacheAsyncStandard where M.Key == D.Key, M.Value == D.Value
+    init(memoryCache: M, diskCache: D)
+}
+
 public protocol CacheStandard {
     associatedtype Value: Codable
     associatedtype Key: Hashable
-    mutating func containsObject(key: Key) -> Bool
+    func containsObject(key: Key) -> Bool
     mutating func query(key: Key) -> Value?
     mutating func save(value: Value, for key: Key)
     mutating func remove(key: Key)
@@ -21,7 +27,7 @@ public protocol CacheStandard {
 public protocol CacheAsyncStandard {
     associatedtype Value: Codable
     associatedtype Key: Hashable
-    mutating func containsObject(key: Key, _ result: @escaping ((_ key: Key, _ contain: Bool) -> Void))
+    func containsObject(key: Key, _ result: @escaping ((_ key: Key, _ contain: Bool) -> Void))
     mutating func query(key: Key, _ result: @escaping ((_ key: Key, _ value: Value?) -> Void))
     mutating func save(value: Value, for key: Key, _ result: @escaping (()->Void))
     mutating func remove(key: Key, _ result: @escaping ((_ key: Key) -> Void))
@@ -107,7 +113,12 @@ protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNode
     associatedtype Key where Self.Key == Node.Key
     associatedtype Value where Self.Value == Node.Value
     
-    var head: Node? { get }
-    var trail: Node? { get }
     subscript(key: Key) -> Value? { mutating get set }
+    
+    func contains(where predicate: (Key) throws -> Bool) rethrows -> Bool
+    mutating func push(_ value: Value, for key: Key)
+    mutating func remove(for key: Key) -> (Key, Value)?
+    mutating func removeAll()
+    mutating func removeTrail() -> (Key, Value)?
+    mutating func value(for key: Key) -> Value?
 }

@@ -44,7 +44,7 @@ public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
     public var head: Node?
     public var trail: Node?
     
-    private var dictContainer = Dictionary<Key, Node>()
+    private var dictContainer = Dictionary<K, Node>()
     
     public init() {}
     
