@@ -7,20 +7,27 @@
 
 import Foundation
 
-final public class LinkNode<K: Hashable, V>: NodeStandard {
+public class AnyLinkNode<K: Hashable, V> {
     public typealias Key = K
     public typealias Value = V
     
     public private(set) var key: Key
     public private(set) var value: Value
+    
+    init(key: Key, value: Value) {
+        self.key = key
+        self.value = value
+    }
+}
+
+final public class LinkNode<K: Hashable, V>: AnyLinkNode<K, V>, NodeStandard {
     public fileprivate(set) weak var pre: LinkNode?
     public fileprivate(set) weak var next: LinkNode?
     
     public init(key: Key, value: Value, pre: LinkNode? = nil, next: LinkNode? = nil) {
-        self.key = key
-        self.value = value
         self.pre = pre
         self.next = next
+        super.init(key: key, value: value)
     }
     
     public static func == (lhs: LinkNode, rhs: LinkNode) -> Bool {
@@ -124,7 +131,7 @@ extension LinkedList {
 // MARK: - remove
 extension LinkedList {
     @discardableResult
-    public mutating func remove(for key: Key) -> (Key, Value)? {
+    public mutating func remove(for key: Key) -> AnyLinkNode<Key, Value>? {
         if let node = dictContainer.removeValue(forKey: key) {
             if node == head {
                 node.next?.pre = nil
@@ -139,14 +146,14 @@ extension LinkedList {
                 node.next?.pre = node.pre
             }
             
-            return (node.key, node.value)
+            return node
         }
         
         return nil
     }
     
     @discardableResult
-    private mutating func remove(_ node: Node) -> (Key, Value)? {
+    private mutating func remove(_ node: Node) -> AnyLinkNode<Key, Value>? {
         return remove(for: node.key)
     }
     
@@ -157,7 +164,7 @@ extension LinkedList {
     }
     
     @discardableResult
-    public mutating func removeTrail() -> (Key, Value)? {
+    public mutating func removeTrail() -> AnyLinkNode<Key, Value>? {
         let removedNode = trail
         if trail == head {
             trail = nil
@@ -169,8 +176,7 @@ extension LinkedList {
         }
         
         if let removedNode = removedNode {
-            dictContainer.removeValue(forKey: removedNode.key)
-            return (removedNode.key, removedNode.value)
+            return dictContainer.removeValue(forKey: removedNode.key)
         }
         
         return nil

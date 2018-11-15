@@ -132,8 +132,8 @@ protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNode
     
     func contains(where predicate: (Key) throws -> Bool) rethrows -> Bool
     mutating func push(_ value: Value, for key: Key)
-    mutating func remove(for key: Key) -> (Key, Value)?
+    mutating func remove(for key: Key) -> AnyLinkNode<Key, Value>?
     mutating func removeAll()
-    mutating func removeTrail() -> (Key, Value)?
+    mutating func removeTrail() -> AnyLinkNode<Key, Value>?
     mutating func value(for key: Key) -> Value?
 }
