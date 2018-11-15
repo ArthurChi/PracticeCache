@@ -112,7 +112,35 @@ class MemoryCacheTests: XCTestCase {
         XCTAssert(memoryCache.totalCost == 30)
     }
     
-    func test_remove_by_age() {
+    func test_trim_by_count() {
+        var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
         
+        for i in 0..<10 {
+            var user = User(isActive: true, account: Account(alias: "test\(index)"))
+            user.key = "\(i)"
+            memoryCache.save(value: user, for: "\(i)")
+        }
+        
+        XCTAssert(memoryCache.totalCount == 10)
+        memoryCache.trimToCount(8)
+        XCTAssert(memoryCache.totalCount == 8, "count is \(memoryCache.totalCount)")
+        XCTAssert(memoryCache.last!.key == "2", "key is \(memoryCache.last!.key)")
+    }
+    
+    func test_trim_by_age() {
+        
+        var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
+        
+        for i in 0..<10 {
+            let user = User(isActive: true, account: Account(alias: "test\(index)"))
+            sleep(1)
+            memoryCache.save(value: user, for: "\(i)")
+        }
+        
+        XCTAssert(memoryCache.totalCount == 10)
+        memoryCache.trimToAge(5)
+        XCTAssert(memoryCache.totalCount == 5, "count is \(memoryCache.totalCount)")
+    }
+    
     }
 }
