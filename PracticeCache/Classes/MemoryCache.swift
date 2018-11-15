@@ -24,9 +24,25 @@ public struct MemoryCache<K: Hashable, V: Codable> {
     private(set) var autoTrimInterval: TimeInterval
     
     public private(set) var totalCost: Int = 0
+    public var totalCount: Int {
+        return link.count
+    }
+    
+    var shouldAutoTrim: Bool {
+        didSet {
+            if oldValue == shouldAutoTrim { return }
+            if shouldAutoTrim {
+                autoTrim()
+            }
+        }
+    }
     
     public var first: V? {
         return link.first
+    }
+    
+    public var last: V? {
+        return link.last
     }
     
     public init(countLimit: Int = Int.max, costLimit: Int = Int.max, ageLimit: TimeInterval = Double.greatestFiniteMagnitude, autoTrimInterval: TimeInterval = 5) {
@@ -34,6 +50,8 @@ public struct MemoryCache<K: Hashable, V: Codable> {
         self.costLimit = costLimit
         self.ageLimit = ageLimit
         self.autoTrimInterval = autoTrimInterval
+        self.shouldAutoTrim = self.autoTrimInterval > 0
+        if shouldAutoTrim { autoTrim() }
     }
 }
 
@@ -114,7 +132,7 @@ extension MemoryCache: AutoTrimable {
         if countLimit <= 0 {
             self.removeAll()
         } else {
-            while link.count >= countLimit, !link.isEmpty {
+            while link.count > countLimit, !link.isEmpty {
                 self.removeLast()
             }
         }

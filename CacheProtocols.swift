@@ -58,6 +58,21 @@ protocol AutoTrimable: CountTrimable, CostTrimable, AgeTrimable {
     var costLimit: Int { get }
     var ageLimit: TimeInterval { get }
     var autoTrimInterval: TimeInterval { get }
+    var shouldAutoTrim: Bool { get set }
+}
+
+extension AutoTrimable {
+    mutating func autoTrim() {
+        var result = self
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + autoTrimInterval) {
+            result.trimToAge(result.ageLimit)
+            result.trimToCost(result.costLimit)
+            result.trimToCount(result.countLimit)
+            if result.shouldAutoTrim { result.autoTrim() }
+        }
+        
+        self = result
+    }
 }
 
 // MARK: - Node and Link
