@@ -62,7 +62,7 @@ class MemoryCacheLinkTests: XCTestCase {
         link.push(1, for: "1")
         link.push(2, for: "2")
         
-        XCTAssert(link.removeTrail()?.0 == "1")
+        XCTAssert(link.removeTrail()?.key == "1")
     }
     
     func test_remove_all() {
@@ -79,8 +79,8 @@ class MemoryCacheLinkTests: XCTestCase {
         link.push(1, for: "1")
         link.push(2, for: "2")
         
-        XCTAssert(link.removeTrail()?.0 == "1")
-        XCTAssert(link.removeTrail()?.0 == "2")
+        XCTAssert(link.removeTrail()?.key == "1")
+        XCTAssert(link.removeTrail()?.key == "2")
         
         XCTAssert(link.isEmpty)
     }
