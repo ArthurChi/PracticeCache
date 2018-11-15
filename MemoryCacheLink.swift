@@ -20,7 +20,7 @@ public class AnyLinkNode<K: Hashable, V> {
     }
 }
 
-final public class LinkNode<K: Hashable, V>: AnyLinkNode<K, V>, NodeStandard {
+final class LinkNode<K: Hashable, V>: AnyLinkNode<K, V>, NodeStandard {
     public fileprivate(set) weak var pre: LinkNode?
     public fileprivate(set) weak var next: LinkNode?
     
@@ -41,13 +41,14 @@ public struct LinkedNodeListIndex<K: Hashable, V>: LinkedNodeListIndexStandard {
 public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
     public typealias Key = K
     public typealias Value = V
-    public typealias Node = LinkNode<K, V>
+    public typealias Node = AnyLinkNode<K, V>
     public typealias Index = LinkedNodeListIndex<K, V>
+    private typealias RealNode = LinkNode<K, V>
     
-    public var head: Node?
-    public var trail: Node?
+    private var head: RealNode?
+    private var trail: RealNode?
     
-    private var dictContainer = Dictionary<K, Node>()
+    private var dictContainer = Dictionary<K, RealNode>()
     
     public init() {}
     
@@ -109,7 +110,7 @@ extension LinkedList {
         if let node = dictContainer[key] {
             bringNodeToHead(node)
         } else {
-            let node = Node(key: key, value: value, next: head)
+            let node = RealNode(key: key, value: value, next: head)
             dictContainer[key] = node
             head?.pre = node
             head = node
@@ -127,7 +128,7 @@ extension LinkedList {
 // MARK: - remove
 extension LinkedList {
     @discardableResult
-    public mutating func remove(for key: Key) -> AnyLinkNode<Key, Value>? {
+    public mutating func remove(for key: Key) -> Node? {
         if let node = dictContainer.removeValue(forKey: key) {
             if node == head {
                 node.next?.pre = nil
@@ -149,7 +150,7 @@ extension LinkedList {
     }
     
     @discardableResult
-    private mutating func remove(_ node: Node) -> AnyLinkNode<Key, Value>? {
+    private mutating func remove(_ node: Node) -> Node? {
         return remove(for: node.key)
     }
     
@@ -160,7 +161,7 @@ extension LinkedList {
     }
     
     @discardableResult
-    public mutating func removeTrail() -> AnyLinkNode<Key, Value>? {
+    public mutating func removeTrail() -> Node? {
         let removedNode = trail
         if trail == head {
             trail = nil
@@ -193,7 +194,7 @@ extension LinkedList {
 
 // MARK: - update
 extension LinkedList {
-    private mutating func bringNodeToHead(_ node: Node) {
+    private mutating func bringNodeToHead(_ node: RealNode) {
         if node == head { return }
         
         if node == trail {

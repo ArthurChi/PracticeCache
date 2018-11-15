@@ -124,9 +124,8 @@ extension LinkedNodeListIndexStandard {
 }
 
 protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNodeListIndexStandard {
-    associatedtype Node where Self.Node == Index.Node
-    associatedtype Key where Self.Key == Node.Key
-    associatedtype Value where Self.Value == Node.Value
+    associatedtype Key: Hashable
+    associatedtype Value
     
     subscript(key: Key) -> Value? { mutating get set }
     
