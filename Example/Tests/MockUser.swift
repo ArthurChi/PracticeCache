@@ -19,6 +19,7 @@ class Account: Codable {
 struct User: Codable, Equatable {
     var isActive: Bool
     var account: Account
+    var key: String = ""
     
     init(isActive: Bool, account: Account) {
         self.isActive = isActive

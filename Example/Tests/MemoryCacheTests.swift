@@ -142,5 +142,27 @@ class MemoryCacheTests: XCTestCase {
         XCTAssert(memoryCache.totalCount == 5, "count is \(memoryCache.totalCount)")
     }
     
+    func test_trim_auto_thread_safe() {
+        var memoryCache = MemoryCache<String, User>(countLimit: 8, autoTrimInterval: 0.2)
+        
+        let exeCount = 10
+        let extAuto = self.expectation(description: "ext_auto")
+        extAuto.expectedFulfillmentCount = exeCount
+        
+        DispatchQueue.concurrentPerform(iterations: exeCount) { (index) in
+            
+            let user = User(isActive: true, account: Account(alias: "test\(index)"))
+            memoryCache.save(value: user, for: "abc\(index)")
+            print("write is \(index)")
+            
+            print(Thread.current)
+
+            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1, execute: {
+                XCTAssert(memoryCache.totalCount == 8, "count is \(memoryCache.totalCount)")
+                extAuto.fulfill()
+            })
+        }
+        
+        wait(for: [extAuto], timeout: 200)
     }
 }
