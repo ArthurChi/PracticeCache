@@ -29,10 +29,6 @@ final public class LinkNode<K: Hashable, V>: AnyLinkNode<K, V>, NodeStandard {
         self.next = next
         super.init(key: key, value: value)
     }
-    
-    public static func == (lhs: LinkNode, rhs: LinkNode) -> Bool {
-        return lhs.key == rhs.key
-    }
 }
 
 public struct LinkedNodeListIndex<K: Hashable, V>: LinkedNodeListIndexStandard {

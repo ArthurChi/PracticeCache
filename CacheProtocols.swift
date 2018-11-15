@@ -93,8 +93,8 @@ extension NodeStandard {
         return "\(value) -> \(next)"
     }
     
-    init(key: Key, value: Value, pre: Self? = nil, next: Self? = nil) {
-        self.init(key: key, value: value, pre: pre, next: next)
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.key == rhs.key
     }
 }
 
