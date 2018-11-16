@@ -9,7 +9,6 @@ import Foundation
 
 public protocol MemoryCacheable: CacheStandard {
     mutating func save(value: Value, for key: Key, cost: Int)
-    mutating func removeLast()
 }
 
 public struct MemoryCache<K: Hashable, V: Codable> {
@@ -114,7 +113,7 @@ extension MemoryCache: MemoryCacheable {
         link.removeAll()
     }
     
-    public mutating func removeLast() {
+    private func removeLast() {
         lock.lock()
         
         defer {
