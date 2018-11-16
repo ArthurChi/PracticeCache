@@ -12,7 +12,7 @@ import PracticeCache
 class MemoryCacheTests: XCTestCase {
 
     func test_memory_contain_thread_safe() {
-        var memoryCache = MemoryCache<String, User>()
+        let memoryCache = MemoryCache<String, User>()
         
         let ext = self.expectation(description: "ext")
         
@@ -39,7 +39,7 @@ class MemoryCacheTests: XCTestCase {
     }
     
     func test_lru_query_trail() {
-        var memoryCache = MemoryCache<String, User>()
+        let memoryCache = MemoryCache<String, User>()
         
         let key = "1"
         let key1 = "2"
@@ -60,7 +60,7 @@ class MemoryCacheTests: XCTestCase {
     }
     
     func test_lru_query_not_trail() {
-        var memoryCache = MemoryCache<String, User>()
+        let memoryCache = MemoryCache<String, User>()
         
         let key = "1"
         let key1 = "2"
@@ -86,7 +86,7 @@ class MemoryCacheTests: XCTestCase {
     }
 
     func test_remove_by_cost() {
-        var memoryCache = MemoryCache<String, User>()
+        let memoryCache = MemoryCache<String, User>()
         
         let key = "1"
         let key1 = "2"
@@ -113,7 +113,7 @@ class MemoryCacheTests: XCTestCase {
     }
     
     func test_trim_by_count() {
-        var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
+        let memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
         
         for i in 0..<10 {
             var user = User(isActive: true, account: Account(alias: "test\(index)"))
@@ -129,7 +129,7 @@ class MemoryCacheTests: XCTestCase {
     
     func test_trim_by_age() {
 
-        var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
+        let memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
 
         for i in 0..<10 {
             let user = User(isActive: true, account: Account(alias: "test\(index)"))
@@ -143,7 +143,7 @@ class MemoryCacheTests: XCTestCase {
     }
     
     func test_trim_by_cost() {
-        var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
+        let memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
         
         print(memoryCache.totalCost)
         
@@ -158,7 +158,7 @@ class MemoryCacheTests: XCTestCase {
     }
 
     func test_trim_auto_thread_safe() {
-        var memoryCache = MemoryCache<String, User>(countLimit: 8, autoTrimInterval: 0.2)
+        let memoryCache = MemoryCache<String, User>(countLimit: 8, autoTrimInterval: 0.2)
         
         let exeCount = 10
         let extAuto = self.expectation(description: "ext_auto")

@@ -11,7 +11,7 @@ public protocol MemoryCacheable: CacheStandard {
     mutating func save(value: Value, for key: Key, cost: Int)
 }
 
-public struct MemoryCache<K: Hashable, V: Codable> {
+public class MemoryCache<K: Hashable, V: Codable> {
     
     private let lock: Lock = Mutex()
     private var link = LinkedList<K, V>()
@@ -59,7 +59,7 @@ extension MemoryCache: MemoryCacheable {
         return link.contains(where: { $0 == key })
     }
     
-    public mutating func query(key: K) -> V? {
+    public func query(key: K) -> V? {
         lock.lock()
         
         defer {
@@ -71,11 +71,11 @@ extension MemoryCache: MemoryCacheable {
     }
     
     // MARK: - save
-    public mutating func save(value: V, for key: K) {
+    public func save(value: V, for key: K) {
         save(value: value, for: key, cost: 0)
     }
     
-    public mutating func save(value: V, for key: K, cost: Int) {
+    public func save(value: V, for key: K, cost: Int) {
         lock.lock()
 
         defer {
@@ -89,7 +89,7 @@ extension MemoryCache: MemoryCacheable {
     }
     
     // MARK: - remove
-    public mutating func remove(key: K) {
+    public func remove(key: K) {
         lock.lock()
         
         defer {
@@ -101,7 +101,7 @@ extension MemoryCache: MemoryCacheable {
         link.remove(for: key)
     }
     
-    public mutating func removeAll() {
+    public func removeAll() {
         lock.lock()
         
         defer {
@@ -127,7 +127,7 @@ extension MemoryCache: MemoryCacheable {
 }
 
 extension MemoryCache: AutoTrimable {
-    public mutating func trimToCount(_ countLimit: Int) {
+    public func trimToCount(_ countLimit: Int) {
         if countLimit <= 0 {
             self.removeAll()
         } else {
@@ -137,7 +137,7 @@ extension MemoryCache: AutoTrimable {
         }
     }
     
-    public mutating func trimToCost(_ costLimit: Int) {
+    public func trimToCost(_ costLimit: Int) {
         if costLimit <= 0 {
             self.removeAll()
         } else {
@@ -147,7 +147,7 @@ extension MemoryCache: AutoTrimable {
         }
     }
     
-    public mutating func trimToAge(_ ageLimit: TimeInterval) {
+    public func trimToAge(_ ageLimit: TimeInterval) {
         if ageLimit <= 0 {
             self.removeAll()
         } else {
