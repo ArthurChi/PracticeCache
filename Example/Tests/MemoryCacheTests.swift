@@ -128,33 +128,48 @@ class MemoryCacheTests: XCTestCase {
     }
     
     func test_trim_by_age() {
-        
+
         var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
-        
+
         for i in 0..<10 {
             let user = User(isActive: true, account: Account(alias: "test\(index)"))
             sleep(1)
             memoryCache.save(value: user, for: "\(i)")
         }
-        
+
         XCTAssert(memoryCache.totalCount == 10)
         memoryCache.trimToAge(5)
         XCTAssert(memoryCache.totalCount == 5, "count is \(memoryCache.totalCount)")
     }
     
+    func test_trim_by_cost() {
+        var memoryCache = MemoryCache<String, User>(autoTrimInterval: -1)
+        
+        print(memoryCache.totalCost)
+        
+        for i in 0..<10 {
+            let user = User(isActive: true, account: Account(alias: "test\(index)"))
+            memoryCache.save(value: user, for: "\(i)", cost: i)
+        }
+        
+        XCTAssert(memoryCache.totalCount == 10)
+        memoryCache.trimToCost(9)
+        XCTAssert(memoryCache.totalCount == 1, "count is \(memoryCache.totalCount)")
+    }
+
     func test_trim_auto_thread_safe() {
         var memoryCache = MemoryCache<String, User>(countLimit: 8, autoTrimInterval: 0.2)
         
         let exeCount = 10
         let extAuto = self.expectation(description: "ext_auto")
         extAuto.expectedFulfillmentCount = exeCount
-        
+
         DispatchQueue.concurrentPerform(iterations: exeCount) { (index) in
-            
+
             let user = User(isActive: true, account: Account(alias: "test\(index)"))
             memoryCache.save(value: user, for: "abc\(index)")
             print("write is \(index)")
-            
+
             print(Thread.current)
 
             DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1, execute: {
@@ -162,7 +177,7 @@ class MemoryCacheTests: XCTestCase {
                 extAuto.fulfill()
             })
         }
-        
+
         wait(for: [extAuto], timeout: 200)
     }
 }

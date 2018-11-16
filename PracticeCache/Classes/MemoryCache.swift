@@ -142,7 +142,7 @@ extension MemoryCache: AutoTrimable {
         if costLimit <= 0 {
             self.removeAll()
         } else {
-            while totalCost >= costLimit, totalCost > 0 {
+            while totalCost > costLimit, totalCost > 0 {
                 self.removeLast()
             }
         }
@@ -154,7 +154,7 @@ extension MemoryCache: AutoTrimable {
         } else {
             let now = Date().timeIntervalSince1970
             while
-                let lastNodeKey = link.endIndex.node?.key,
+                let lastNodeKey = link.index(before: link.endIndex).node?.key,
                 let lastTrimNode = trimDict[lastNodeKey],
                 now - lastTrimNode.age > ageLimit {
                 self.removeLast()
