@@ -38,7 +38,7 @@ public struct LinkedNodeListIndex<K: Hashable, V>: LinkedNodeListIndexStandard {
     }
 }
 
-public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard {
+public struct LinkedList<K: Hashable, V>: LinkedNodeListStandard, CustomStringConvertible {
     public typealias Key = K
     public typealias Value = V
     public typealias Node = AnyLinkNode<K, V>
@@ -208,5 +208,11 @@ extension LinkedList {
         node.next = head
         head?.pre = node
         head = node
+    }
+}
+
+extension LinkedList {
+    public var description: String {
+        return head?.description ?? "is empty"
     }
 }

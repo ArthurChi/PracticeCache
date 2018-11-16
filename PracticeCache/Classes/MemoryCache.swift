@@ -177,3 +177,9 @@ extension MemoryCache {
         }
     }
 }
+
+extension MemoryCache: CustomStringConvertible {
+    public var description: String {
+        return link.description
+    }
+}
