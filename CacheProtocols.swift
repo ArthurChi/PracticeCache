@@ -41,37 +41,26 @@ protocol Lock {
 }
 
 // MARK: - Trim
-protocol CountTrimable {
-    mutating func trimToCount(_ count: Int)
-}
-
-protocol CostTrimable {
-    mutating func trimToCost(_ cost: Int)
-}
-
-protocol AgeTrimable {
-    mutating func trimToAge(_ age: TimeInterval)
-}
-
-protocol AutoTrimable: CountTrimable, CostTrimable, AgeTrimable {
+protocol AutoTrimable: class {
     var countLimit: Int { get }
     var costLimit: Int { get }
     var ageLimit: TimeInterval { get }
     var autoTrimInterval: TimeInterval { get }
     var shouldAutoTrim: Bool { get set }
+    
+    func trimToAge(_ age: TimeInterval)
+    func trimToCost(_ cost: Int)
+    func trimToCount(_ count: Int)
 }
 
 extension AutoTrimable {
-    mutating func autoTrim() {
-        var result = self
+    func autoTrim() {
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + autoTrimInterval) {
-            result.trimToAge(result.ageLimit)
-            result.trimToCost(result.costLimit)
-            result.trimToCount(result.countLimit)
-            if result.shouldAutoTrim { result.autoTrim() }
+            self.trimToAge(self.ageLimit)
+            self.trimToCost(self.costLimit)
+            self.trimToCount(self.countLimit)
+            if self.shouldAutoTrim { self.autoTrim() }
         }
-        
-        self = result
     }
 }
 
